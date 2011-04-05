@@ -18,7 +18,16 @@ PhysicsEngine.prototype.runPhysics = function(ticks) {
   var self = this;
   $.each(this.nodes, function(index, node){
     if(node.pinned) return true;
-    var aggregateForce = new Point(0,0);
+    var aggregateForce = self.aggregateRepulsiveForcesOnNode(node);
     node.updatePositionAndVelocity(aggregateForce, ticks, self.dampening);
   });
+};
+
+PhysicsEngine.prototype.aggregateRepulsiveForcesOnNode = function(nodeForceAppliedTo) {
+  var self = this;
+  var totalRepulsiveForce = new Point(0,0);
+  $.each(this.nodes, function(index, node){
+    totalRepulsiveForce = totalRepulsiveForce.plus(nodeForceAppliedTo.repulsionFrom(node));
+  });
+  return totalRepulsiveForce;
 };

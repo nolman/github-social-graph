@@ -32,4 +32,40 @@ describe("PhysicsEngine", function() {
     expect(node.position).toBeSamePointAs(new Point(2, 3));
   });
 
+  it("should repell nodes from each other", function(){
+    var startPoint = new Point(0, 0);
+    var startingVelocity = new Point(0,0);
+    var node = new Widget(startPoint, startingVelocity);
+    var node2 = new Widget(startPoint, startingVelocity);
+    var physicsEngine = new PhysicsEngine();
+    physicsEngine.register(node);
+    physicsEngine.register(node2);
+    physicsEngine.runPhysics(1);
+    expect(node.position).toNotEqual(startPoint);
+    expect(node.velocity).toNotEqual(startingVelocity);
+    expect(node2.position).toNotEqual(startPoint);
+    expect(node2.velocity).toNotEqual(startingVelocity);
+    expect(node.position).toNotEqual(node2.position);
+  });
+
+  it("should not aggregate repulsive force on itself", function(){
+    var startPoint = new Point(0, 0);
+    var startingVelocity = new Point(0,0);
+    var node = new Widget(startPoint, startingVelocity);
+    var physicsEngine = new PhysicsEngine();
+    physicsEngine.register(node);
+    expect(physicsEngine.aggregateRepulsiveForcesOnNode(node)).toEqual(new Point(0,0));
+  });
+
+  it("should aggregate repulsive force from other nodes", function(){
+    var startPoint = new Point(0, 0);
+    var startingVelocity = new Point(0,0);
+    var node = new Widget(startPoint, startingVelocity);
+    var node2 = new Widget(startPoint, startingVelocity);
+    var physicsEngine = new PhysicsEngine();
+    physicsEngine.register(node);
+    physicsEngine.register(node2);
+    expect(physicsEngine.aggregateRepulsiveForcesOnNode(node)).toNotEqual(new Point(0,0));
+  });
+
 });
