@@ -17,6 +17,7 @@ PhysicsEngine.prototype.magnitudeOfRepulsiveForceAt = function(distance) {
 PhysicsEngine.prototype.runPhysics = function(ticks) {
   var self = this;
   $.each(this.nodes, function(index, node){
+    if(node.pinned) return true;
     var aggregateForce = new Point(0,0);
     node.updatePositionAndVelocity(aggregateForce, ticks, self.dampening);
   });

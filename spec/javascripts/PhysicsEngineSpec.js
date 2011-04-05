@@ -22,4 +22,14 @@ describe("PhysicsEngine", function() {
     expect(node.position).toBeSamePointAs(expectedPosition);
   });
 
+  it("should not move widgets that have been clicked", function(){
+    var milliSeconds = 10;
+    var node = new Widget(new Point(2, 3), new Point(1, 1));
+    var physicsEngine = new PhysicsEngine();
+    physicsEngine.register(node);
+    node.mousedown();
+    physicsEngine.runPhysics(10);
+    expect(node.position).toBeSamePointAs(new Point(2, 3));
+  });
+
 });
