@@ -4,7 +4,7 @@ function Widget(position, velocity) {
   this.pinned = false;
   this.connectedNodes = [];
   this.dampening = 0.5;
-  this.repulsiveConstant = 40;
+  this.repulsiveConstant = 100;
   this.attractiveConstant = 0.5;
 }
 
