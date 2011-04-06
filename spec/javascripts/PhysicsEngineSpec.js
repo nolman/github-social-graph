@@ -3,21 +3,12 @@ describe("PhysicsEngine", function() {
   beforeEach(function() {
   });
 
-  it("should repulse points according to the inverse square of seperation", function() {
-    var physicsEngine = new PhysicsEngine();
-    var distanceOne = 3.0;
-    var magnitudeOne = physicsEngine.magnitudeOfRepulsiveForceAt(distanceOne);
-    var distanceTwo = 7.0;
-    var magnitudeTwo = physicsEngine.magnitudeOfRepulsiveForceAt(distanceTwo);
-    expect(Math.pow(distanceTwo/distanceOne, 2.0)).toBeWithin(magnitudeOne/magnitudeTwo, 0.0001);
-  });
-
   it("should update widget position based on its velocity", function(){
     var milliSeconds = 10;
     var node = new Widget(new Point(0, 0), new Point(1, 1));
     var physicsEngine = new PhysicsEngine();
     physicsEngine.register(node);
-    var expectedPosition = new Point(milliSeconds * physicsEngine.dampening, milliSeconds * physicsEngine.dampening);
+    var expectedPosition = new Point(milliSeconds * node.dampening, milliSeconds * node.dampening);
     physicsEngine.runPhysics(milliSeconds);
     expect(node.position).toBeSamePointAs(expectedPosition);
   });
@@ -46,6 +37,21 @@ describe("PhysicsEngine", function() {
     expect(node2.position).toNotEqual(startPoint);
     expect(node2.velocity).toNotEqual(startingVelocity);
     expect(node.position).toNotEqual(node2.position);
+  });
+
+  it("should attract two connected nodes together", function(){
+    var startPoint = new Point(0, 0);
+    var startPoint2 = new Point(1000, 1000);
+    var startingVelocity = new Point(0,0);
+    var node = new Widget(startPoint, startingVelocity);
+    var node2 = new Widget(startPoint2, startingVelocity);
+    var physicsEngine = new PhysicsEngine();
+    node.connectTo(node2);
+    physicsEngine.register(node);
+    physicsEngine.register(node2);
+    var previousDistance = node.distanceFrom(node2);
+    physicsEngine.runPhysics(1);
+    expect(node.distanceFrom(node2)).toBeLessThan(previousDistance);
   });
 
   it("should not aggregate repulsive force on itself", function(){
