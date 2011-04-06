@@ -20,7 +20,6 @@ $(document).ready(function(){
       animation.physicsEngine.register(contributorWidget);
     });
   });
-  
 
   function drawIt(){
     var currentTime = new Date();
@@ -53,5 +52,5 @@ $(document).ready(function(){
     context.quadraticCurveTo(x, y, x+radius, y);
     context.stroke();
   }
-  
+
 });
