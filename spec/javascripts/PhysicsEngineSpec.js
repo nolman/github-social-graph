@@ -3,6 +3,15 @@ describe("PhysicsEngine", function() {
   beforeEach(function() {
   });
 
+  it("should return the node at a position", function(){
+    var milliSeconds = 10;
+    var node = new Widget(new Point(0, 0), new Point(1, 1));
+    var physicsEngine = new PhysicsEngine();
+    physicsEngine.register(node);
+    expect(physicsEngine.nodeAt(new Point(400,400))).toBeNull();
+    expect(physicsEngine.nodeAt(new Point(0,0))).toEqual(node);
+  });
+
   it("should update widget position based on its velocity", function(){
     var milliSeconds = 10;
     var node = new Widget(new Point(0, 0), new Point(1, 1));

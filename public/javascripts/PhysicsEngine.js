@@ -1,5 +1,6 @@
 function PhysicsEngine() {
-  this.nodes = [];
+  this.nodes = new Array();
+  this.lastRunTime = new Date();
 }
 
 // TODO: an array is not the best data structure for this
@@ -7,7 +8,17 @@ PhysicsEngine.prototype.register = function(node) {
   this.nodes.push(node);
 };
 
+PhysicsEngine.prototype.timeSinceLastRun = function() {
+  var currentTime = new Date();
+  var timeDiff = new Date() - this.lastRunTime;
+  this.lastRunTime = currentTime;
+  return timeDiff;
+};
+
 PhysicsEngine.prototype.runPhysics = function(ticks) {
+  if(!ticks){
+    ticks = this.timeSinceLastRun();
+  }
   var self = this;
   $.each(this.nodes, function(index, node){
     if(node.pinned) return true;
@@ -24,4 +35,15 @@ PhysicsEngine.prototype.aggregateRepulsiveForcesOnNode = function(nodeForceAppli
     totalRepulsiveForce = totalRepulsiveForce.plus(nodeForceAppliedTo.repulsionFrom(node, self.repulsiveConstant));
   });
   return totalRepulsiveForce;
+};
+
+PhysicsEngine.prototype.nodeAt = function(point) {
+  var match = null
+  $.each(this.nodes, function(index, node){
+    if(node.contains(point)){
+      match = node
+      return false;
+    }
+  });
+  return match;
 };

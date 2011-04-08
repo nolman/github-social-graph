@@ -35,4 +35,28 @@ describe("Widget", function() {
     expect(widget1.repulsionFrom(widget2)).toBeSamePointAs(new Point(0,-4));
   });
 
+  it("should know if a point is left of a widget", function() {
+    var widget = new Widget(new Point(0,0));
+    expect(widget.contains(new Point((-widget.width/2),0))).toEqual(true);
+    expect(widget.contains(new Point((-widget.width/2)-1,0))).toEqual(false);
+  });
+
+  it("should know if a point is right of a widget", function() {
+    var widget = new Widget(new Point(0,0));
+    expect(widget.contains(new Point((widget.width/2),0))).toEqual(true);
+    expect(widget.contains(new Point((widget.width/2)+1,0))).toEqual(false);
+  });
+
+  it("should know if a point is above of a widget", function() {
+    var widget = new Widget(new Point(0,0));
+    expect(widget.contains(new Point(0,-widget.height/2))).toEqual(true);
+    expect(widget.contains(new Point(0, (-widget.height/2)-1))).toEqual(false);
+  });
+
+  it("should know if a point is under a widget", function() {
+    var widget = new Widget(new Point(0,0));
+    expect(widget.contains(new Point(0, widget.height/2))).toEqual(true);
+    expect(widget.contains(new Point(0, (widget.height/2)+1))).toEqual(false);
+  });
+
 });

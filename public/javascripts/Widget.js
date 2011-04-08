@@ -1,4 +1,8 @@
-function Widget(position, velocity) {
+function Widget(position, velocity, widget_type, uniqueIdentifier) {
+  this.uniqueIdentifier = uniqueIdentifier;
+  this.widget_type = widget_type;
+  this.width = 50;
+  this.height = 20;
   this.position = position;
   this.velocity = velocity;
   this.pinned = false;
@@ -50,4 +54,10 @@ Widget.prototype.aggregateAttraction = function(){
     summedAttraction = summedAttraction.plus(self.attractionTo(otherNode));
   });
   return summedAttraction;
+};
+
+Widget.prototype.contains = function(point){
+  var withinXAxis = this.position.x - this.width/2 <= point.x && this.position.x + this.width/2 >= point.x;
+  var withinYAxis = this.position.y - this.height/2 <= point.y && this.position.y + this.height/2 >= point.y;
+  return withinXAxis && withinYAxis;
 };
