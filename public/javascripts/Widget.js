@@ -4,9 +4,9 @@ function Widget(position, velocity, renders) {
   this.velocity = velocity;
   this.pinned = false;
   this.connectedNodes = [];
-  this.dampening = 0.5;
+  this.dampening = 0.2;
   this.repulsiveConstant = 100;
-  this.attractiveConstant = 0.5;
+  this.attractiveConstant = 0.4;
 }
 
 Widget.prototype.uniqueIdentifier = function(){
@@ -33,9 +33,13 @@ Widget.prototype.mousedown = function(){
   this.pinned = true;
 };
 
+Widget.prototype.updatePosition = function(newPosition){
+  this.position = newPosition;
+};
+
 Widget.prototype.updatePositionAndVelocity = function(aggregateForce, ticks) {
   this.velocity = this.velocity.plus(aggregateForce).times(this.dampening);
-  this.position = this.position.plus(this.velocity.times(ticks));
+  this.updatePosition(this.position.plus(this.velocity.times(ticks)));
 };
 
 Widget.prototype.repulsionFrom = function(otherNode) {
