@@ -65,4 +65,11 @@ describe("Widget", function() {
     expect(widget.contains(new Point(0, (widget.height()/2)+1))).toEqual(false);
   });
 
+  it("should render connections without raising any errors", function(){
+    var widget1 = new Widget(new Point(0,0), new Point(0,0), githubUser);
+    var widget2 = new Widget(new Point(0,5), new Point(0,0), githubUser);
+    widget1.connectTo(widget2);
+    widget1.drawConnections();
+  });
+
 });

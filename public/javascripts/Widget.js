@@ -21,6 +21,13 @@ Widget.prototype.drawIt = function(){
   this.renders.draw(this.position);
 };
 
+Widget.prototype.drawConnections = function(){
+  var otherPoints = $.map(this.connectedNodes, function(connectedNode, index){
+    return connectedNode.position;
+  });
+  this.renders.drawConnections(this.position, otherPoints);
+};
+
 // record and track movement
 Widget.prototype.mousedown = function(){
   this.pinned = true;

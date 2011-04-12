@@ -15,9 +15,7 @@ $(document).ready(function(){
     // });
   }
   function fetchRepoContributors(repoRender){
-    console.log(repoRender)
     $.getJSON("http://github.com/api/v2/json/repos/show/defunkt/resque/contributors?callback=?",function(data){
-      console.log(data);
       var contributors = jQuery.map(data.contributors, function(contributor, index){
         return new GithubUserRender(contributor, animation.canvasContext);
       });
@@ -27,7 +25,6 @@ $(document).ready(function(){
   }
   
   $.getJSON("http://github.com/api/v2/json/repos/show/defunkt/resque?callback=?", function(resqueData){
-    console.log(resqueData);
     var repoRender = new GithubRepoRender(resqueData, animation.canvasContext);
     animation.physicsEngine.insertOrConnectWidgets([repoRender]);
     setTimeout(fetchRepoContributors, 1000, repoRender);
@@ -39,12 +36,7 @@ $(document).ready(function(){
     animation.canvas.width = animation.canvas.width;
     for (var index in animation.physicsEngine.nodes) {
       var node = animation.physicsEngine.nodes[index];
-      $.each(node.connectedNodes, function(index, connectedNode){
-        animation.canvasContext.moveTo(node.position.x, node.position.y);
-        animation.canvasContext.lineTo(connectedNode.position.x, connectedNode.position.y)
-        animation.canvasContext.strokeStyle = "#ddd";
-        animation.canvasContext.stroke();
-      });
+      node.drawConnections();
     }
     for (var index in animation.physicsEngine.nodes) {
       var node = animation.physicsEngine.nodes[index];

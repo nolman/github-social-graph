@@ -6,6 +6,16 @@ Renderable.prototype.dimensions = function() {
   return new Point(dimensions.width + 10, 16);
 };
 
+Renderable.prototype.drawConnections = function(centerPoint, otherPoints) {
+  var self = this;
+  $.each(otherPoints, function(index, otherPoint){
+    self.context.moveTo(centerPoint.x, centerPoint.y);
+    self.context.lineTo(otherPoint.x, otherPoint.y)
+    self.context.strokeStyle = "#ddd";
+    self.context.stroke();
+  });
+};
+
 Renderable.prototype.draw = function(centerPoint) {
   // $("#selectedWidget #name").html(this.name);
   this.context.fillStyle="#000000";
