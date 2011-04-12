@@ -1,12 +1,31 @@
 describe("PhysicsEngine", function() {
 
   beforeEach(function() {
+    repoData = {"repository":{"forks":230,"open_issues":28,"description":"Resque is a Redis-backed Ruby library for creating background jobs, placing those jobs on multiple queues, and processing them later.","watchers":2042,"has_issues":true,"fork":false,"language":"Ruby","pushed_at":"2011/03/22 11:09:54 -0700","has_downloads":false,"homepage":"http://github.com/blog/542-introducing-resque","size":1696,"private":false,"name":"resque","owner":"defunkt","url":"https://github.com/defunkt/resque","has_wiki":true,"created_at":"2009/08/11 17:27:35 -0700"}};
+    userData = {"name":"Nolan Evans","company":"Involver","gravatar_id":"492d8bf8006b56b62e159d5bbe2df2d5","location":"San Francisco","blog":"http://www.nolanevans.com","type":"User","contributions":8,"login":"nolman","email":null};
+    $(document.body).append($("<canvas/>", {"id":'canvas'}))
+    var context = document.getElementById("canvas").getContext("2d");
+    repo = new GithubRepoRender(repoData, context);
+    user = new GithubUserRender(userData, context);
+    physicsEngine = new PhysicsEngine();
+  });
+
+  it("should drop a widget in the center point if set", function(){
+    physicsEngine = new PhysicsEngine(new Point(300, 250));
+    physicsEngine.insertOrConnectWidgets([repo]);
+    expect(physicsEngine.nodeAt(new Point(300, 250))).not.toBeNull();
+  });
+
+  it("should connect a widget if it already existed", function(){
+    physicsEngine.insertOrConnectWidgets([repo]);
+    physicsEngine.insertOrConnectWidgets([user]);
+    physicsEngine.insertOrConnectWidgets([user], repo.uniqueIdentifier());
+    expect(physicsEngine.nodeCount()).toEqual(2);
   });
 
   it("should return the node at a position", function(){
     var milliSeconds = 10;
-    var node = new Widget(new Point(0, 0), new Point(1, 1));
-    var physicsEngine = new PhysicsEngine();
+    var node = new Widget(new Point(0, 0), new Point(1, 1), repo);
     physicsEngine.register(node);
     expect(physicsEngine.nodeAt(new Point(400,400))).toBeNull();
     expect(physicsEngine.nodeAt(new Point(0,0))).toEqual(node);
@@ -15,7 +34,6 @@ describe("PhysicsEngine", function() {
   it("should update widget position based on its velocity", function(){
     var milliSeconds = 10;
     var node = new Widget(new Point(0, 0), new Point(1, 1));
-    var physicsEngine = new PhysicsEngine();
     physicsEngine.register(node);
     var expectedPosition = new Point(milliSeconds * node.dampening, milliSeconds * node.dampening);
     physicsEngine.runPhysics(milliSeconds);
@@ -25,7 +43,6 @@ describe("PhysicsEngine", function() {
   it("should not move widgets that have been clicked", function(){
     var milliSeconds = 10;
     var node = new Widget(new Point(2, 3), new Point(1, 1));
-    var physicsEngine = new PhysicsEngine();
     physicsEngine.register(node);
     node.mousedown();
     physicsEngine.runPhysics(10);
@@ -35,12 +52,11 @@ describe("PhysicsEngine", function() {
   it("should repell nodes from each other", function(){
     var startPoint = new Point(0, 0);
     var startingVelocity = new Point(0,0);
-    var node = new Widget(startPoint, startingVelocity);
-    var node2 = new Widget(startPoint, startingVelocity);
-    var physicsEngine = new PhysicsEngine();
-    physicsEngine.register(node);
-    physicsEngine.register(node2);
-    physicsEngine.runPhysics(1);
+    var node = new Widget(startPoint, startingVelocity, repo);
+    var node2 = new Widget(startPoint, startingVelocity, user);
+    physicsEngine.register(node, repo.uniqueIdentifier());
+    physicsEngine.register(node2, user.uniqueIdentifier());
+    physicsEngine.runPhysics(10);
     expect(node.position).toNotEqual(startPoint);
     expect(node.velocity).toNotEqual(startingVelocity);
     expect(node2.position).toNotEqual(startPoint);
@@ -54,7 +70,6 @@ describe("PhysicsEngine", function() {
     var startingVelocity = new Point(0,0);
     var node = new Widget(startPoint, startingVelocity);
     var node2 = new Widget(startPoint2, startingVelocity);
-    var physicsEngine = new PhysicsEngine();
     node.connectTo(node2);
     physicsEngine.register(node);
     physicsEngine.register(node2);
@@ -67,7 +82,6 @@ describe("PhysicsEngine", function() {
     var startPoint = new Point(0, 0);
     var startingVelocity = new Point(0,0);
     var node = new Widget(startPoint, startingVelocity);
-    var physicsEngine = new PhysicsEngine();
     physicsEngine.register(node);
     expect(physicsEngine.aggregateRepulsiveForcesOnNode(node)).toEqual(new Point(0,0));
   });
@@ -77,7 +91,6 @@ describe("PhysicsEngine", function() {
     var startingVelocity = new Point(0,0);
     var node = new Widget(startPoint, startingVelocity);
     var node2 = new Widget(startPoint, startingVelocity);
-    var physicsEngine = new PhysicsEngine();
     physicsEngine.register(node);
     physicsEngine.register(node2);
     expect(physicsEngine.aggregateRepulsiveForcesOnNode(node)).toNotEqual(new Point(0,0));

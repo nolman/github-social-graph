@@ -1,8 +1,5 @@
-function Widget(position, velocity, widget_type, uniqueIdentifier) {
-  this.uniqueIdentifier = uniqueIdentifier;
-  this.widget_type = widget_type;
-  this.width = 50;
-  this.height = 20;
+function Widget(position, velocity, renders) {
+  this.renders = renders;
   this.position = position;
   this.velocity = velocity;
   this.pinned = false;
@@ -11,6 +8,18 @@ function Widget(position, velocity, widget_type, uniqueIdentifier) {
   this.repulsiveConstant = 100;
   this.attractiveConstant = 0.5;
 }
+
+Widget.prototype.uniqueIdentifier = function(){
+  return this.renders.uniqueIdentifier;
+};
+
+Widget.prototype.dimensions = function(){
+  return this.renders.dimensions();
+};
+
+Widget.prototype.drawIt = function(){
+  this.renders.draw(this.position);
+};
 
 // record and track movement
 Widget.prototype.mousedown = function(){
@@ -57,7 +66,15 @@ Widget.prototype.aggregateAttraction = function(){
 };
 
 Widget.prototype.contains = function(point){
-  var withinXAxis = this.position.x - this.width/2 <= point.x && this.position.x + this.width/2 >= point.x;
-  var withinYAxis = this.position.y - this.height/2 <= point.y && this.position.y + this.height/2 >= point.y;
+  var dimension = this.dimensions();
+  var withinXAxis = this.position.x - dimension.x/2 <= point.x && this.position.x + dimension.x/2 >= point.x;
+  var withinYAxis = this.position.y - dimension.y/2 <= point.y && this.position.y + dimension.y/2 >= point.y;
   return withinXAxis && withinYAxis;
+};
+
+Widget.prototype.width = function(){
+  return this.dimensions().x;
+};
+Widget.prototype.height = function(){
+  return this.dimensions().y;
 };
