@@ -12,6 +12,8 @@ PhysicsEngine.prototype.insertOrConnectWidgets = function(renders, linkedIdentif
       var widget = new Widget(self.startingPoint, new Point(0,0), render);
       widget.pinned = true;
       self.empty = false
+    } else if(self.nodes[render.uniqueIdentifier()]){
+      var widget = self.nodes[render.uniqueIdentifier()];
     } else{
       var x = (Math.random() > 0.5 ? -1 : 1) * Math.random() * 300;
       var y = (Math.random() > 0.5 ? -1 : 1) * Math.random() * 300;

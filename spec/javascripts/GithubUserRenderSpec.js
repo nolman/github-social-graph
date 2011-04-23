@@ -5,7 +5,7 @@ describe("GithubuserRender", function() {
     $(document.body).append($("<canvas/>", {"id":'canvas'}))
     var context = document.getElementById("canvas").getContext("2d");
     var render = new GithubUserRender(userData, context);
-    expect(render.uniqueIdentifier()).toEqual("nolman");
+    expect(render.uniqueIdentifier().login).toEqual("nolman");
   });
 
   it("should calculate the dimensions", function(){

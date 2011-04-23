@@ -11,13 +11,17 @@
     <script src='/public/javascripts/Animation.js' type='text/javascript'></script>
   </head>
   <body>
-    <canvas id='canvas' width='1000' height='800'>
-      IE is not supported at this time.
-    </canvas>
-    <div id="selectedWidget">
-      <div id="name">
-      </div>
-      <div id="gravatar">
+    <div>
+      <form id='user_selector'>
+        <input id='user_name' type='text'/>
+        <input type='submit'/>
+      </form>
+    </div>
+    <div id='physics_box' style='display:none'>
+      <canvas id='canvas' width='1000' height='800' style="float:left;">
+        IE is not supported at this time.
+      </canvas>
+      <div id="selectedWidget" style='float:left;'>
       </div>
     </div>
   </body>

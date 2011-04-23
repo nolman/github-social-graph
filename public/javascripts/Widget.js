@@ -4,9 +4,9 @@ function Widget(position, velocity, renders) {
   this.velocity = velocity;
   this.pinned = false;
   this.connectedNodes = [];
-  this.dampening = 0.2;
+  this.dampening = 0.4;
   this.repulsiveConstant = 100;
-  this.attractiveConstant = 0.4;
+  this.attractiveConstant = 0.5;
 }
 
 Widget.prototype.uniqueIdentifier = function(){

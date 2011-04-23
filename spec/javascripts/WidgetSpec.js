@@ -9,7 +9,7 @@ describe("Widget", function() {
   it("should calculate the attraction between two widgets", function() {
     var widget1 = new Widget(new Point(0,0), new Point(0,0));
     var widget2 = new Widget(new Point(0,5), new Point(0,0));
-    expect(widget1.attractionTo(widget2)).toBeSamePointAs(new Point(0,0.002));
+    expect(widget1.attractionTo(widget2)).toBeSamePointAs(new Point(0,0.0025));
   });
 
   it("should calculate zero attraction for a widget between two equally space widgets", function() {
@@ -27,7 +27,7 @@ describe("Widget", function() {
     var widget3 = new Widget(new Point(5,5), new Point(0,0));
     widget1.connectTo(widget2);
     widget1.connectTo(widget3);
-    expect(widget1.aggregateAttraction()).toBeSamePointAs(new Point(0.002,0.004));
+    expect(widget1.aggregateAttraction()).toBeSamePointAs(new Point(0.0025,0.005));
   });
 
   it("should have no attraction force to itself", function() {

@@ -1,5 +1,4 @@
 $(document).ready(function(){
-  base_repo_url = "http://github.com/api/v2/json/repos/show/";
 
   // Taken from: http://diveintohtml5.org/canvas.html
   function getCursorPosition(e) {
@@ -21,6 +20,14 @@ $(document).ready(function(){
     var point = getCursorPosition(e);
     var nodeAt = animation.physicsEngine.nodeAt(point);
     if(nodeAt){
+      selectedUser = nodeAt.renders.data;
+      $.getJSON("http://github.com/api/v2/json/user/show/" + selectedUser + "?callback=?", function(userData){
+        if(selectedUser == userData.user.login){
+          var target = $("#selectedWidget");
+          target.html($('<img/>', {'src':'https://secure.gravatar.com/avatar/' + userData.user.gravatar_id + '?s=140'}));
+          target.append($("<a/>", {'text': userData.user.login, 'href':'https://github.com/' + userData.user.login, 'target':"_other"}))
+        }
+      });
       nodeAt.pinned = true;
       animation.selectedWidget = nodeAt;
     }
@@ -49,31 +56,42 @@ $(document).ready(function(){
     this.physicsEngine = new PhysicsEngine(new Point(this.canvas.width/2, this.canvas.height/2));
   }
 
-  var animation = new Animation();
-  setInterval(drawIt, 100);
-  function FetchUserRepos(user, contributorWidget){
-    // $.getJSON(base_repo_url + user + "?callback=?", function(data){
-    //   var repoWidget = new Widget(new Point(Math.random()* 300,Math.random()* 300), new Point(0,0), "red");
-    //   contributorWidget.connectTo(repoWidget);
-    //   animation.physicsEngine.register(repoWidget);
-    // });
+  function FetchUserRepos(){
+    var data = user_queue.pop();
+    fetchUserFollows(data[0], data[1]);
+  };
+
+  function enqueueFetch(userName, distance){
+    if(!fetchedData[userName] && distance < 1){
+      fetchedData[userName] = 1;
+      user_queue.push([userName, distance + 1]);
+    }
   }
-  function fetchRepoContributors(repoRender){
-    $.getJSON("http://github.com/api/v2/json/repos/show/defunkt/resque/contributors?callback=?",function(data){
-      var contributors = jQuery.map(data.contributors, function(contributor, index){
-        return new GithubUserRender(contributor, animation.canvasContext);
+
+  function fetchUserFollows(userName, distance){
+    $.getJSON("http://github.com/api/v2/json/user/show/" + userName + "/followers?callback=?", function(data){
+      var userList = data.users;
+      if(userList.length > 10){
+        userList = userList.slice(0,9);
+      }
+      var users = jQuery.map(userList, function(user, index){
+        enqueueFetch(user, distance);
+        return new GithubUserRender(user, animation.canvasContext);
       });
-      animation.physicsEngine.insertOrConnectWidgets(contributors, repoRender.uniqueIdentifier());
+      animation.physicsEngine.insertOrConnectWidgets(users, userName);
     });
-    
+    $.getJSON("http://github.com/api/v2/json/user/show/" + userName + "/following?callback=?", function(data){
+      var userList = data.users;
+      if(userList.length > 10){
+        userList = userList.slice(0,9);
+      }
+      var users = jQuery.map(userList, function(user, index){
+        enqueueFetch(user, distance);
+        return new GithubUserRender(user, animation.canvasContext);
+      });
+      animation.physicsEngine.insertOrConnectWidgets(users, userName);
+    });
   }
-  
-  $.getJSON("http://github.com/api/v2/json/repos/show/defunkt/resque?callback=?", function(resqueData){
-    var repoRender = new GithubRepoRender(resqueData, animation.canvasContext);
-    animation.physicsEngine.insertOrConnectWidgets([repoRender]);
-    setTimeout(fetchRepoContributors, 1000, repoRender);
-  });
-  
 
   function drawIt(){
     animation.physicsEngine.runPhysics();
@@ -88,4 +106,20 @@ $(document).ready(function(){
     }
   }
 
+  $("#user_selector").submit(function(event){
+    event.preventDefault();
+    $('#user_selector').hide();
+    $('#physics_box').show();
+    var userName = $("#user_name").val();
+    console.log($("#user_name").val());
+    fetchedData = [];
+    animation = new Animation();
+    animation.physicsEngine.insertOrConnectWidgets([new GithubUserRender(userName, animation.canvasContext)]);
+    setInterval(drawIt, 50);
+    setInterval(FetchUserRepos, 2200);
+    user_queue = $.queue("repofetch")
+    
+    fetchUserFollows(userName, 0);
+    
+  });
 });

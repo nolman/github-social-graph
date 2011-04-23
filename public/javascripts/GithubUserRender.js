@@ -6,7 +6,7 @@ function GithubUserRender(data, context) {
 GithubUserRender.prototype = new Renderable();
 
 GithubUserRender.prototype.name = function() {
-  return this.data.login;
+  return this.data;
 };
 
 GithubUserRender.prototype.color = function() {
@@ -14,5 +14,5 @@ GithubUserRender.prototype.color = function() {
 };
 
 GithubUserRender.prototype.uniqueIdentifier = function() {
-  return this.data.login;
+  return this.data;
 };

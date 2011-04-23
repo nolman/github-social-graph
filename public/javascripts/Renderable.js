@@ -8,12 +8,14 @@ Renderable.prototype.dimensions = function() {
 
 Renderable.prototype.drawConnections = function(centerPoint, otherPoints) {
   var self = this;
+  self.context.strokeStyle = "#ddd";
   $.each(otherPoints, function(index, otherPoint){
-    self.context.moveTo(centerPoint.x, centerPoint.y);
-    self.context.lineTo(otherPoint.x, otherPoint.y)
-    self.context.strokeStyle = "#ddd";
-    self.context.stroke();
-  });
+      self.context.beginPath();
+      self.context.moveTo(centerPoint.x, centerPoint.y);
+      self.context.lineTo(otherPoint.x, otherPoint.y);
+      self.context.closePath();
+      self.context.stroke();
+    });
 };
 
 Renderable.prototype.draw = function(centerPoint) {
